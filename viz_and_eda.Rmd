@@ -59,6 +59,127 @@ ggplot(weather_df,aes(x = date, y = tmax, color = name, size = prcp)) +
 
 ## univariate
 ```{r}
+#little quiz
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin), color = "blue")
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin, color = "blue"))
+# Histograms! fill is filled, color is holly
+ggplot(weather_df,aes(x = tmax, fill = name)) + 
+  geom_histogram() +
+  facet_grid(~name)
+ggplot(weather_df,aes(x = tmax, fill = name)) + 
+  geom_density() +
+  facet_grid(~name)
+# Violin plot
+ploti = ggplot(weather_df, aes(x = tmax, y = name)) +
+  geom_density_ridges()
+ggsave("density_ridges.pdf",ploti,width = 8, height = 5)
+```
+
+## 10/2 class viz 2.0
+```{r}
+devtools::install_github("thomasp85/patchwork")
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+```
+First scatterplot
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) +
+  #Tick marks and lables
+  scale_x_continuous(
+    breaks = c(-15, 0, 15),
+    labels = c("-15º C", "0º C", "15º C"), #put units on the breaks
+    limits = c(-20, 42) #when you really want to show some scale
+  ) +
+  scale_y_continuous(
+    position = "right", #y axis to the right!
+    trans = "sqrt"
+  )
+```
+## colors and themes
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE
+  ) + 
+  theme(legend.position = "bottom")
+#legend.position = "none" will remove the legend
+```
+
+## Themes
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE
+  ) + 
+  theme_bw() +
+  theme(legend.position = "bottom")
+# or theme_classic or theme_minimum
+# use ggthemes to do more
+```
+practice
+Revisit the plot showing tmax against date for each location. Use labels, scale options, and theme changes to improve the readability of this plot.
+```{r}
+ggplot(weather_df, aes(date, tmax,color = name)) +
+  geom_point() +
+  labs(
+    title = "Temperature vs date",
+    x = "Date",
+    y = "max temperature",
+    caption = "Data from the rnoaa packages"
+  ) +
+  viridis::scale_color_viridis(
+    name = "location",
+    discrete = TRUE
+    ) + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+
 
 ```
+
+## Arguments to `geom_*`
+```{r}
+central_park_df = 
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki_df = 
+  weather_df %>% 
+  filter(name == "Waikiki_HA")
+
+ggplot(waikiki_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_line(data = central_park_df) +
+  theme(legend.position = "bottom")
+```
+
+## patchwork
+```{r}
+
+```
+
 
